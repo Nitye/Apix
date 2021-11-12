@@ -140,7 +140,7 @@ if __name__ == '__main__':
                     print("Failed to open camera")
                     speak("Failed to open camera")
                     break
-                cv2.imshow("God's beautiful creation", frame)
+                cv2.imshow("Apix Camera", frame)
                 k = cv2.waitKey(1)
                 order = takeCommand()
                 if order == 'cheese':
