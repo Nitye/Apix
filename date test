@@ -1,0 +1,14 @@
+from datetime import datetime
+chin = str(input("Enter Check-in Date(yyyy-mm-dd):"))
+new_chin = datetime.strptime(chin, "%Y-%m-%d")
+chout = str(input("Enter Check-out Date(yyyy-mm-dd):"))
+new_chout = datetime.strptime(chout, "%Y-%m-%d")
+price_per_day = 5000
+tax = 20/100
+date_1 = new_chin
+date_2 = new_chout
+delta_diff = date_2-date_1
+number_of_days = int(f'{delta_diff.days}')
+pretotal = (number_of_days*price_per_day)
+amount_payable = pretotal + (tax*pretotal)
+print(amount_payable)

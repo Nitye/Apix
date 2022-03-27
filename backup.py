@@ -6,7 +6,6 @@ import wikipedia
 import os
 import random
 import smtplib
-import operator
 import cv2
 import numpy as np
 from PIL import ImageGrab
@@ -15,28 +14,29 @@ import requests
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 import datefinder
-from functools import reduce
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-#print(voices[0].id)
+# print(voices[0].id)
 engine.setProperty('voice', voices[0].id)
+
 
 def speak(audio):
     engine.say(audio)
     engine.runAndWait()
 
+
 hour = int(datetime.datetime.now().hour)
 min = int(datetime.datetime.now().minute)
 date = str(datetime.date.today())
-emails = {"sayesha gupta":"sayeshagupta26@gmail.com"}
+
 
 def wishMe():
-    if hour>=4 and hour<12:
+    if hour >= 0 and hour < 12:
         speak("Good Morning!")
         print("Good Morning!")
 
-    elif hour>=12 and hour<18:
+    elif hour >= 12 and hour < 18:
         speak("Good Afternoon!")
         print("Good Afternoon!")
 
@@ -45,6 +45,7 @@ def wishMe():
         print("Good Evening!")
     print("I am apix. How may I help you.")
     speak("I am apix. How may I help you.")
+
 
 def takeCommand():
     r = sr.Recognizer()
@@ -65,14 +66,9 @@ def takeCommand():
         return "None"
     return query
 
-def stopMusic():
-    try:
-        os.system('TASKKILL /F /IM GrooveMusic.exe')
-    except Exception as e:
-        print(str(e))
 
 def sendEmail(to, content):
-    e  = open("C:\\Apix Media\\Apix email.txt", "r")
+    e = open("C:\\Apix Media\\Apix email.txt", "r")
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
@@ -82,11 +78,11 @@ def sendEmail(to, content):
     server.sendmail(email, to, content)
     server.close()
 
+
 if __name__ == '__main__':
     wishMe()
     while True:
         query = takeCommand().lower()
-        numbers = [int(word) for word in query.split() if word.isdigit()]
 
         if 'wikipedia' in query:
             speak("Searching Wikipedia")
@@ -94,7 +90,7 @@ if __name__ == '__main__':
             results = wikipedia.summary(query, sentences=2)
             print("According to Wikipedia " + results)
             speak("According to Wikipedia")
-            speak (results)
+            speak(results)
 
         elif 'open youtube' in query:
             webbrowser.open("www.youtube.com")
@@ -115,13 +111,10 @@ if __name__ == '__main__':
 
         elif 'email' in query:
             try:
-                # speak("Who should I send the email to?")
-                # print("Who should I send the email to?")
-                # person = takeCommand()
                 speak("What should I say?")
                 print("What should I say?")
                 content = takeCommand()
-                to = emails("sayesha gupta")
+                to = "sayeshagupta26@gmail.com"
                 sendEmail(to, content)
                 speak("Email has been sent")
                 print("Email has been sent")
@@ -144,7 +137,7 @@ if __name__ == '__main__':
                     print("Failed to open camera")
                     speak("Failed to open camera")
                     break
-                cv2.imshow("Apix Camera", frame)
+                cv2.imshow("God's beautiful creation", frame)
                 k = cv2.waitKey(1)
                 order = takeCommand()
                 if order == 'cheese':
@@ -153,7 +146,7 @@ if __name__ == '__main__':
                     cv2.imwrite(img_name, frame)
                     print('Picture taken and saved in Apix Media')
                     speak('Picture taken and saved in Apix Media')
-                    img_counter+=1
+                    img_counter += 1
                 elif order == 'thanks':
                     print('Closing camera')
                     speak('Closing camera')
@@ -226,31 +219,6 @@ if __name__ == '__main__':
             print("Your number is " + str(dice))
             speak("Your number is " + str(dice))
 
-        elif 'sum' or 'add' in query:
-            print(numbers)
-            sum1 = reduce((lambda x, y: x+y), [numbers])
-            print("The sum is " + str(sum1))
-            speak("The sum is " + str(sum1))
-
-        elif 'difference' or 'subtract' in query:
-            numbers1 = [int(word) for word in query.split() if word.isdigit()]
-            diff = reduce((lambda x, y: x-y), numbers1)
-            abs_diff = abs(reduce((lambda x, y: x-y), numbers1))
-            print("The difference is " + str(diff) + " and the absolute difference is " + str(abs_diff))
-            speak("The difference is " + str(diff) + " and the absolute difference is " + str(abs_diff))
-
-        elif 'product' or 'multiply' or 'into' in query:
-            numbers2 = [int(word) for word in query.split() if word.isdigit()]
-            product = reduce((lambda x, y: x*y), numbers2)
-            print("The product is " + str(product))
-            speak("The product is " + str(product))
-
-        elif 'divide' or 'quotient' in query:
-            numbers3 = [int(word) for word in query.split() if word.isdigit()]
-            quotient = reduce((lambda x, y: x/y), numbers3)
-            print("The result is " + str(quotient))
-            speak("The result is " + str(quotient))
-
         elif 'weather' in query:
             f = open("C:\\Apix Media\\Apix Secrecies.txt", "r")
             user_api = f.readline()
@@ -269,21 +237,19 @@ if __name__ == '__main__':
                 hmdt = api_data['main']['humidity']
                 wind_spd = api_data['wind']['speed']
                 date_time = datetime.datetime.now().strftime("%d %b %Y | %I:%M:%S %p")
-                print(("Weather Stats for: "+location).format(location.upper(), date_time))
+                print(("Weather Stats for: " + location).format(location.upper(), date_time))
                 print("Current temperature is: {:.2f} deg C".format(temp_city))
                 print("Current weather desc  :", weather_desc)
                 print("Current Humidity      :", hmdt, '%')
                 print("Current wind speed    :", wind_spd, 'kmph')
                 speak("Weather Stats for - {} || {}".format(location.upper(), date_time))
                 speak("Current temperature is: {:.2f} degree Celsius".format(temp_city))
-                speak("Current weather description is  :" + weather_desc)
-                speak("Current Humidity is     :" + str(hmdt) + '%')
-                speak("Current wind speed is   :" + str(wind_spd) + 'kilometres per hour')
+                speak("Current weather description  :" + weather_desc)
+                speak("Current Humidity      :" + str(hmdt) + '%')
+                speak("Current wind speed    :" + str(wind_spd) + 'kilometres per hour')
 
         elif "alarm" and "tomorrow" in query:
             date_timeB = datefinder.find_dates(query)
-            print("Setting alarm.....")
-            speak("Setting alarm")
             for mat in date_timeB:
                 stringB = str(mat)
                 dateB = str(datetime.date.today() + datetime.timedelta(days=1))
@@ -294,8 +260,7 @@ if __name__ == '__main__':
                     if dateB == date:
                         if hourB == hour:
                             if minB == min:
-                                print("Your alarm has gone off")
-                                speak("Your alarm has gone off")
+                                print("Alarm is off")
                                 os.startfile("C:\\Apix Media\\alarm music.mp3")
                                 break
 
@@ -304,8 +269,6 @@ if __name__ == '__main__':
 
         elif "alarm" in query:
             date_timeA = datefinder.find_dates(query)
-            print("Setting alarm.....")
-            speak("Setting alarm")
             for mat in date_timeA:
                 stringA = str(mat)
                 dateA = str(stringA[:-9])
@@ -316,8 +279,7 @@ if __name__ == '__main__':
                     if dateA == date:
                         if hourA == hour:
                             if minA == min:
-                                print("Your alarm has gone off")
-                                speak("Your alarm has gone off")
+                                print("Alarm is off")
                                 os.startfile("C:\\Apix Media\\alarm music.mp3")
                                 break
 
@@ -327,9 +289,12 @@ if __name__ == '__main__':
         elif 'chat' in query:
             bot = ChatBot('Apix')
             bot.set_trainer(ListTrainer)
-            langFile = os.listdir('C:/Users/dell/Desktop/Chat-Bot-main/chatterbot-corpus-master/chatterbot-corpus-master/chatterbot_corpus/data/english/')
+            langFile = os.listdir(
+                'C:/Users/dell/Desktop/Chat-Bot-main/chatterbot-corpus-master/chatterbot-corpus-master/chatterbot_corpus/data/english/')
             for file in langFile:
-                data = open('C:/Users/dell/Desktop/Chat-Bot-main/chatterbot-corpus-master/chatterbot-corpus-master/chatterbot_corpus/data/english/' + file,'r', encoding='utf-8').readlines()
+                data = open(
+                    'C:/Users/dell/Desktop/Chat-Bot-main/chatterbot-corpus-master/chatterbot-corpus-master/chatterbot_corpus/data/english/' + file,
+                    'r', encoding='utf-8').readlines()
                 bot.train(data)
             while True:
                 ip = takeCommand()
@@ -343,10 +308,7 @@ if __name__ == '__main__':
                     speak("I will miss you")
                     break
 
-        elif 'stop' or 'abort' in query:
-            stopMusic()
-
-        elif 'bye' or 'quit' or 'see you later' in query:
+        elif 'bye' or 'quit' or 'abort' or 'see you later' in query:
             print("Hope I was of service to you. Bye")
             speak("Hope I was of service to you. Bye")
             exit()
